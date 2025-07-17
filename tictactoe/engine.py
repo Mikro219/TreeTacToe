@@ -24,8 +24,8 @@ class GameState:
     win_condition: int      # needed length to win
     winner: int             # the winner of the game
     player_turn: int        # the current player turn
-    moves_remaining: int         # available moves remaining
-    move_log = list[Move]   # list of moves from start
+    moves_remaining: int    # available moves remaining
+    num_of_pieces: int      # number of pieces on the board (used for backtracking later)
 
     def __init__(self, n: int, m: int, k: int):
         self.board = [[0 for _ in range(m)] for _ in range(n)]
@@ -35,11 +35,11 @@ class GameState:
         self.winner = 0
         self.player_turn = 1
         self.moves_remaining = n * m
-        self.move_log = []
+        self.num_of_pieces = 0
 
     def get_valid_moves(self) -> list[Move]:
         """
-
+        Return all valid moves for the board
         """
         moves = []
         for i in range(self.rows):
@@ -50,7 +50,7 @@ class GameState:
 
     def make_move(self, move: Move) -> bool:
         """
-
+        Make a valid move on the board
         """
         if move.row < 0 or move.row >= self.rows:
             return False
@@ -63,25 +63,102 @@ class GameState:
 
         self.board[move.row][move.col] = self.player_turn
         self.player_turn = 2 if self.player_turn == 1 else 1
-        self.move_log.append(move)
         self.moves_remaining -= 1
+        self.num_of_pieces += 1
 
         return True
 
     def is_terminal(self) -> bool:
         """
-
+        Return True if the game is over, False otherwise
         """
         return self.winner != 0
 
     def get_winner(self) -> int:
         """
-
+        Returns which player won the game
         """
-        pass
+        return self.winner
+
+    def check_winner(self) -> bool:
+        """
+        Checks if anyone won the game
+        Will modify self.winner if someone did win
+        """
+        return self.check_rows() or self.check_cols() or self.check_diagonals()
+
+    def check_consecutive(self, direction: str, row: int, col: int) -> bool:
+        """
+        Checks if player <player> has k consecutive pieces in <direction> at (row, col)
+        """
+        if direction == "row":
+            for i in range(self.win_condition):
+                if self.board[row][col] != self.board[row][col + i]:
+                    return False
+            return True
+
+        if direction == "column":
+            for i in range(self.win_condition):
+                if self.board[row][col] != self.board[row + i][col]:
+                    return False
+            return True
+
+        if direction == "diagonal-lr":
+            for i in range(self.win_condition):
+                if self.board[row][col] != self.board[row + i][col + i]:
+                    return False
+            return True
+
+        if direction == "diagonal-rl":
+            for i in range(self.win_condition):
+                if self.board[row][col] != self.board[row + i][col - i]:
+                    return False
+            return True
+
+    def check_rows(self) -> bool:
+        """
+        Checks all rows to see if there is a winner
+        """
+        for i in range(self.rows):
+            for j in range(self.columns-self.win_condition+1):
+                if self.board[i][j] != 0 and self.check_consecutive("row", i, j):
+                    self.winner = self.board[i][j]
+                    return True
+        return False
+
+    def check_cols(self) -> bool:
+        """
+        Checks all cols to see if there is a winner
+        """
+        for i in range(self.columns):
+            for j in range(self.rows-self.win_condition+1):
+                if self.board[j][i] != 0 and self.check_consecutive("column", j, i):
+                    self.winner = self.board[j][i]
+                    return True
+        return False
+
+    def check_diagonals(self) -> bool:
+        """
+        Checks all diagonals to see if there is a winner
+        """
+        # left-to-right diagonals
+        for i in range(self.rows-self.win_condition+1):
+            for j in range(self.columns-self.win_condition+1):
+                if self.board[i][j] != 0 and self.check_consecutive("diagonal-lr", i, j):
+                    self.winner = self.board[i][j]
+                    return True
+
+        # right-to-left diagonals
+        for i in range(self.rows-self.win_condition+1):
+            for j in range(self.win_condition-1, self.columns):
+                if self.board[i][j] != 0 and self.check_consecutive("diagonal-rl", i, j):
+                    self.winner = self.board[i][j]
+                    return True
+
+        return False
 
     def copy(self) -> 'GameState':
         """
-
+        Make a copy of the board
         """
         pass
