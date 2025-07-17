@@ -161,4 +161,10 @@ class GameState:
         """
         Make a copy of the board
         """
-        pass
+        gs = GameState(self.rows, self.columns, self.win_condition)
+        gs.board = self.board.copy()
+        gs.winner = self.winner
+        gs.player_turn = self.player_turn
+        gs.moves_remaining = self.moves_remaining
+        gs.num_of_pieces = self.num_of_pieces
+        return gs
