@@ -3,6 +3,7 @@ This class is responsible for storing all the information about the current stat
 be responsible for determining the valid moves at the current state. It will also keep a move log.
 """
 
+
 class Move:
 
     row: int     # row of the move
@@ -34,31 +35,31 @@ class GameState:
         self.is_player1_turn = True
         self.move_log = []
 
-    def get_valid_moves(self):
+    def get_valid_moves(self) -> list[Move]:
         """
 
         """
         pass
 
-    def make_move(self, move: Move):
+    def make_move(self, move: Move) -> bool:
         """
 
         """
         pass
 
-    def is_terminal(self):
+    def is_terminal(self) -> bool:
         """
 
         """
         pass
 
-    def get_winner(self):
+    def get_winner(self) -> int:
         """
 
         """
         pass
 
-    def copy(self):
+    def copy(self) -> 'GameState':
         """
 
         """
