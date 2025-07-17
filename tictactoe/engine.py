@@ -4,7 +4,16 @@ be responsible for determining the valid moves at the current state. It will als
 """
 
 class Move:
-    pass
+
+    row: int     # row of the move
+    col: int     # column of the move
+    player: int  # 1 for player1, and 2 for player2
+
+    def __init__(self, row: int, col: int, player: int):
+        self.row = row
+        self.col = col
+        self.player = player
+
 
 class GameState:
 
@@ -12,7 +21,7 @@ class GameState:
     rows: int               # number of rows
     columns: int            # number of columns
     win_condition: int      # needed length to win
-    is_terminal : bool      # is the game over?
+    winner: int             # the winner of the game
     is_player1_turn: bool   # is it player1's turn?
     move_log = list[Move]   # list of moves from start
 
@@ -21,14 +30,36 @@ class GameState:
         self.rows = n
         self.columns = m
         self.win_condition = k
+        self.winner = 0
         self.is_player1_turn = True
         self.move_log = []
 
     def get_valid_moves(self):
+        """
+
+        """
         pass
 
     def make_move(self, move: Move):
+        """
+
+        """
         pass
 
-    def check_win(self):
+    def is_terminal(self):
+        """
+
+        """
+        pass
+
+    def get_winner(self):
+        """
+
+        """
+        pass
+
+    def copy(self):
+        """
+
+        """
         pass
