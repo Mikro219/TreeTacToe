@@ -23,7 +23,8 @@ class GameState:
     columns: int            # number of columns
     win_condition: int      # needed length to win
     winner: int             # the winner of the game
-    is_player1_turn: bool   # is it player1's turn?
+    player_turn: int        # the current player turn
+    moves_remaining: int         # available moves remaining
     move_log = list[Move]   # list of moves from start
 
     def __init__(self, n: int, m: int, k: int):
@@ -32,26 +33,46 @@ class GameState:
         self.columns = m
         self.win_condition = k
         self.winner = 0
-        self.is_player1_turn = True
+        self.player_turn = 1
+        self.moves_remaining = n * m
         self.move_log = []
 
     def get_valid_moves(self) -> list[Move]:
         """
 
         """
-        pass
+        moves = []
+        for i in range(self.rows):
+            for j in range(self.columns):
+                if self.board[i][j] == 0:
+                    moves.append(Move(i, j, self.player_turn))
+        return moves
 
     def make_move(self, move: Move) -> bool:
         """
 
         """
-        pass
+        if move.row < 0 or move.row >= self.rows:
+            return False
+
+        if move.col < 0 or move.col >= self.columns:
+            return False
+
+        if self.board[move.row][move.col] != 0:
+            return False
+
+        self.board[move.row][move.col] = self.player_turn
+        self.player_turn = 2 if self.player_turn == 1 else 1
+        self.move_log.append(move)
+        self.moves_remaining -= 1
+
+        return True
 
     def is_terminal(self) -> bool:
         """
 
         """
-        pass
+        return self.winner != 0
 
     def get_winner(self) -> int:
         """
