@@ -16,35 +16,36 @@ def get_successors(state: GameState) -> list[GameState]:
     return successors
 
 
-def generate_game_tree(n: int, m: int, k: int) -> dict[GameState: list[GameState]]:
+def create_game_tree(n: int, m: int, k: int) -> dict[GameState: list[GameState]]:
     """
 
     """
-    graph = {}
+    a_list = {}
     queue = deque()
     queue.append(GameState(n, m, k))
 
     while queue:
         gs = queue.popleft()
 
-        if gs in graph:
+        if gs in a_list:
             continue
 
-        gs.check_winner()
-
-        if gs.is_terminal():
-            graph[gs] = []
+        if gs.check_winner():
+            a_list[gs] = []
             continue
 
-        graph[gs] = get_successors(gs)
+        a_list[gs] = get_successors(gs)
 
-        for next_gs in graph[gs]:
+        for next_gs in a_list[gs]:
             queue.append(next_gs)
 
-    return graph
+    return a_list
 
 
 def print_board(board: list[list[int]]) -> None:
+    """
+    from utils.py
+    """
     symbol = {0: " ", 1: "O", 2: "X"}
     rows = len(board)
     cols = len(board[0]) if rows > 0 else 0
@@ -56,7 +57,7 @@ def print_board(board: list[list[int]]) -> None:
             print("-" * (4 * cols - 3))  # draws separator line
 
 
-graph = generate_game_tree(3, 3, 3)
+graph = create_game_tree(3, 3, 3)
 
 for n_state in graph:
     print("======================== vertex ============================")

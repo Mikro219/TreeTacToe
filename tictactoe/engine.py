@@ -99,8 +99,8 @@ class GameState:
 
     def check_winner(self) -> bool:
         """
-        Checks if anyone won the game.
-        Will modify self.winner if someone did win.
+        Checks if anyone won the game
+        Will modify self.winner if someone did win
         """
         for direction in DIRECTIONS.values():
             if self.check_consecutive(direction):
@@ -114,7 +114,7 @@ class GameState:
 
     def check_consecutive(self, direction: tuple[int, int]) -> bool:
         """
-        Checks the board in the given direction for a win.
+        Checks the board in the given direction for a win
         """
         dr, dc = direction
         for row in range(self.rows):
@@ -127,7 +127,7 @@ class GameState:
 
     def has_k_consecutive(self, row: int, col: int, dr: int, dc: int) -> bool:
         """
-        Checks if there are k consecutive same pieces starting at (row, col)
+        Checks if there are k consecutive pieces of the same, starting at (row, col)
         in direction (dr, dc)
         """
 
