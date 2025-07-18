@@ -60,7 +60,7 @@ def print_board(board: list[list[int]]) -> None:
             print("-" * (4 * cols - 3))  # draws separator line
     print()
 
-board = GameState(4, 4, 3)
+board = GameState(4, 4, 4)
 print(find_winner(board))
 
 # for n_state in a_list_td:
