@@ -11,6 +11,7 @@ def get_successors(state: GameState) -> list[GameState]:
         gs = state.copy()
         gs.make_move(move)
         successors.append(gs)
+        gs.check_winner()
 
     return successors
 
@@ -18,18 +19,20 @@ def find_winner(gs: GameState) -> int:
     """
 
     """
+    # if winner already calculated, return winner
+    if gs.get_winner() != 0:
+        return gs.get_winner()
+
+    # otherwise, go through children
     next_moves = get_successors(gs)
     for child in next_moves:
-        if not child.check_winner():
-            if find_winner(child) == gs.player_turn:
-                gs.winner = gs.player_turn
-                return gs.winner
-        if child.get_winner() == gs.player_turn:
+        # if possible winning move, that game state is that player's win
+        if find_winner(child) == gs.player_turn:
             gs.winner = gs.player_turn
             return gs.winner
 
-    if gs.get_winner() == 0:
-        gs.winner = 2 if gs.player_turn == 1 else 1
+    # if no possible winning moves, other player's win
+    gs.winner = 2 if gs.player_turn == 1 else 1
     return gs.winner
 
 def print_board(board: list[list[int]]) -> None:
@@ -46,8 +49,9 @@ def print_board(board: list[list[int]]) -> None:
         if i < rows - 1:
             print("-" * (4 * cols - 3))  # draws separator line
 
-empty_board = GameState(3, 5, 4)
-print(find_winner(empty_board))
+board = GameState(3, 5, 4)
+board.board = [[], [], []]
+print(find_winner(board))
 
 # for n_state in a_list_td:
 #     print("======================== vertex ============================")
