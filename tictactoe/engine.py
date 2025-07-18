@@ -37,6 +37,15 @@ class GameState:
         self.moves_remaining = n * m
         self.num_of_pieces = 0
 
+    def __eq__(self, other):
+        if not isinstance(other, GameState):
+            return False
+        return self.board == other.board and self.player_turn == other.player_turn
+
+    def __hash__(self):
+        board_tuple = tuple(tuple(row) for row in self.board)
+        return hash((board_tuple, self.player_turn))
+
     def get_valid_moves(self) -> list[Move]:
         """
         Return all valid moves for the board
@@ -85,7 +94,14 @@ class GameState:
         Checks if anyone won the game
         Will modify self.winner if someone did win
         """
-        return self.check_rows() or self.check_cols() or self.check_diagonals()
+        if self.check_rows() or self.check_cols() or self.check_diagonals():
+            return True
+
+        if not self.moves_remaining:
+            self.winner = 2
+            return True
+
+        return False
 
     def check_consecutive(self, direction: str, row: int, col: int) -> bool:
         """
@@ -95,25 +111,23 @@ class GameState:
             for i in range(self.win_condition):
                 if self.board[row][col] != self.board[row][col + i]:
                     return False
-            return True
 
-        if direction == "column":
+        elif direction == "column":
             for i in range(self.win_condition):
                 if self.board[row][col] != self.board[row + i][col]:
                     return False
-            return True
 
-        if direction == "diagonal-lr":
+        elif direction == "diagonal-lr":
             for i in range(self.win_condition):
                 if self.board[row][col] != self.board[row + i][col + i]:
                     return False
-            return True
 
-        if direction == "diagonal-rl":
+        elif direction == "diagonal-rl":
             for i in range(self.win_condition):
                 if self.board[row][col] != self.board[row + i][col - i]:
                     return False
-            return True
+
+        return True
 
     def check_rows(self) -> bool:
         """
@@ -162,7 +176,7 @@ class GameState:
         Make a copy of the board
         """
         gs = GameState(self.rows, self.columns, self.win_condition)
-        gs.board = self.board.copy()
+        gs.board = [row[:] for row in self.board] # deep copy of board
         gs.winner = self.winner
         gs.player_turn = self.player_turn
         gs.moves_remaining = self.moves_remaining
