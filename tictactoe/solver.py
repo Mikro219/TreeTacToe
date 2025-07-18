@@ -34,7 +34,7 @@ def find_winner(gs: GameState, memo=None) -> int:
     next_moves = get_successors(gs)
     for child in next_moves:
         # if possible winning move, that game state is that player's win
-        if find_winner(child) == gs.player_turn:
+        if find_winner(child, memo) == gs.player_turn:
             gs.winner = gs.player_turn
             memo[gs] = gs.winner
             return gs.winner
