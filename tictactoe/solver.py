@@ -15,12 +15,19 @@ def get_successors(state: GameState) -> list[GameState]:
 
     return successors
 
-def find_winner(gs: GameState) -> int:
+def find_winner(gs: GameState, memo=None) -> int:
     """
 
     """
+    if memo is None:
+        memo = {}
+
+    if gs in memo:
+        return memo[gs]
+
     # if winner already calculated, return winner
     if gs.get_winner() != 0:
+        memo[gs] = gs.get_winner()
         return gs.get_winner()
 
     # otherwise, go through children
@@ -29,10 +36,12 @@ def find_winner(gs: GameState) -> int:
         # if possible winning move, that game state is that player's win
         if find_winner(child) == gs.player_turn:
             gs.winner = gs.player_turn
+            memo[gs] = gs.winner
             return gs.winner
 
     # if no possible winning moves, other player's win
     gs.winner = 2 if gs.player_turn == 1 else 1
+    memo[gs] = gs.winner
     return gs.winner
 
 def print_board(board: list[list[int]]) -> None:
@@ -43,13 +52,15 @@ def print_board(board: list[list[int]]) -> None:
     rows = len(board)
     cols = len(board[0]) if rows > 0 else 0
 
+    print()
     for i in range(rows):
         row_str = " | ".join(symbol[cell] for cell in board[i])
         print(row_str)
         if i < rows - 1:
             print("-" * (4 * cols - 3))  # draws separator line
+    print()
 
-board = GameState(3, 5, 4)
+board = GameState(4, 4, 3)
 print(find_winner(board))
 
 # for n_state in a_list_td:
