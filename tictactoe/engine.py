@@ -1,8 +1,7 @@
 """
-This class is responsible for storing all the information about the current state of a tic-tac-toe game. It will also
-be responsible for determining the valid moves at the current state.
+This class is responsible for storing all the information about the current state of a tic-tac-toe game.
+It is also responsible for determining the valid moves at the current state.
 """
-
 
 DIRECTIONS = {
     "row": (0, 1),
@@ -10,7 +9,6 @@ DIRECTIONS = {
     "diag_lr": (1, 1),
     "diag_rl": (1, -1),
 }
-
 
 class Move:
 
@@ -55,9 +53,6 @@ class GameState:
         return hash((board_tuple, self.player_turn))
 
     def get_valid_moves(self) -> list[Move]:
-        """
-        Return all valid moves for the board
-        """
         moves = []
         for i in range(self.rows):
             for j in range(self.columns):
@@ -65,39 +60,16 @@ class GameState:
                     moves.append(Move(i, j, self.player_turn))
         return moves
 
-    def make_move(self, move: Move) -> bool:
+    def make_move(self, move: Move):
         """
-        Make a valid move on the board
+        Precondition: <move> is a valid move on the board
         """
-        if move.row < 0 or move.row >= self.rows:
-            return False
-
-        if move.col < 0 or move.col >= self.columns:
-            return False
-
-        if self.board[move.row][move.col] != 0:
-            return False
-
         self.board[move.row][move.col] = self.player_turn
         self.player_turn = 2 if self.player_turn == 1 else 1
         self.moves_remaining -= 1
         self.num_of_pieces += 1
 
-        return True
-
-    def is_terminal(self) -> bool:
-        """
-        Return True if the game is over, False otherwise
-        """
-        return self.winner != 0
-
-    def get_winner(self) -> int:
-        """
-        Returns which player won the game
-        """
-        return self.winner
-
-    def check_winner(self) -> bool:
+    def check_and_set_winner(self) -> bool:
         """
         Checks if anyone won the game
         Will modify self.winner if someone did win
@@ -114,7 +86,7 @@ class GameState:
 
     def check_consecutive(self, direction: tuple[int, int]) -> bool:
         """
-        Checks the board in the given direction for a win
+        Checks the board in the given <direction> for a win
         """
         dr, dc = direction
         for row in range(self.rows):
@@ -127,10 +99,9 @@ class GameState:
 
     def has_k_consecutive(self, row: int, col: int, dr: int, dc: int) -> bool:
         """
-        Checks if there are k consecutive pieces of the same, starting at (row, col)
-        in direction (dr, dc)
+        Checks if there are k consecutive pieces of the same player's piece,
+        starting at (row, col) in direction (dr, dc)
         """
-
         end_row = row + dr * (self.win_condition - 1)
         end_col = col + dc * (self.win_condition - 1)
 
@@ -146,9 +117,6 @@ class GameState:
 
 
     def copy(self) -> 'GameState':
-        """
-        Make a copy of the board
-        """
         gs = GameState(self.rows, self.columns, self.win_condition)
         gs.board = [row[:] for row in self.board] # deep copy of board
         gs.winner = self.winner
