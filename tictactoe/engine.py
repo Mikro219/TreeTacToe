@@ -46,11 +46,62 @@ class GameState:
     def __eq__(self, other):
         if not isinstance(other, GameState):
             return False
-        return self.board == other.board and self.player_turn == other.player_turn
+        return self.is_symmetric(other) and self.player_turn == other.player_turn
 
     def __hash__(self):
-        board_tuple = tuple(tuple(row) for row in self.board)
+        variants = [
+            self.board,
+            self._rotate_90(),
+            self._rotate_180(),
+            self._rotate_270(),
+            self._reflect_horizontal(),
+            self._reflect_vertical(),
+            self._reflect_main_diagonal(),
+            self._reflect_anti_diagonal()
+        ]
+
+        board_tuple = min(tuple(tuple(row) for row in variant) for variant in variants)
         return hash((board_tuple, self.player_turn))
+
+    def is_symmetric(self, other) -> bool:
+        if self.board == other.board:
+            return True
+
+        if self._rotate_180() == other.board:
+            return True
+
+        if (self._reflect_horizontal() == other.board or
+            self._reflect_vertical() == other.board or
+            self._reflect_main_diagonal() == other.board or
+            self._reflect_anti_diagonal() == other.board):
+            return True
+
+        if self.rows == self.columns:
+            if (self._rotate_90() == other.board or self._rotate_270() == other.board):
+                return True
+
+        return False
+
+    def _rotate_90(self) -> list[list[int]]:
+        return [list(reversed(col)) for col in zip(*self.board)]
+
+    def _rotate_180(self) -> list[list[int]]:
+        return [row[::-1] for row in self.board][::-1]
+
+    def _rotate_270(self) -> list[list[int]]:
+        return [list(col) for col in zip(*self.board[::-1])]
+
+    def _reflect_horizontal(self) -> list[list[int]]:
+        return [row[::-1] for row in self.board]
+
+    def _reflect_vertical(self) -> list[list[int]]:
+        return [row for row in self.board][::-1]
+
+    def _reflect_main_diagonal(self) -> list[list[int]]:
+        return [list(row) for row in zip(*self.board)]
+
+    def _reflect_anti_diagonal(self) -> list[list[int]]:
+        return [list(row)[::-1] for row in zip(*self.board[::-1])]
 
     def get_valid_moves(self) -> list[Move]:
         moves = []
