@@ -83,10 +83,10 @@ class GameState:
         return False
 
     def _rotate_90(self) -> list[list[int]]:
-        return [list(reversed(col)) for col in zip(*self.board)]
+        return [list(col)[::-1] for col in zip(*self.board)]
 
     def _rotate_180(self) -> list[list[int]]:
-        return [row[::-1] for row in self.board][::-1]
+        return [row[::-1] for row in self.board[::-1]]
 
     def _rotate_270(self) -> list[list[int]]:
         return [list(col) for col in zip(*self.board[::-1])]
@@ -95,7 +95,7 @@ class GameState:
         return [row[::-1] for row in self.board]
 
     def _reflect_vertical(self) -> list[list[int]]:
-        return [row for row in self.board][::-1]
+        return self.board[::-1]
 
     def _reflect_main_diagonal(self) -> list[list[int]]:
         return [list(row) for row in zip(*self.board)]
@@ -165,7 +165,6 @@ class GameState:
                 return False
 
         return True
-
 
     def copy(self) -> 'GameState':
         gs = GameState(self.rows, self.columns, self.win_condition)
