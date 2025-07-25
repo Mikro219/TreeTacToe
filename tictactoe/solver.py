@@ -36,5 +36,5 @@ def find_winner(gs: GameState, memo=None) -> int:
     return gs.winner
 
 # This is how to use our code to find the winner of an empty board
-board = GameState(3, 5, 4)
+board = GameState(4, 4, 4)
 print(find_winner(board))

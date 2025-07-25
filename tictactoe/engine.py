@@ -59,11 +59,18 @@ class GameState:
             self._reflect_main_diagonal(),
             self._reflect_anti_diagonal()
         ]
-
         board_tuple = min(tuple(tuple(row) for row in variant) for variant in variants)
         return hash((board_tuple, self.player_turn))
 
     def is_symmetric(self, other) -> bool:
+        """
+        Optimization - part of the "Bonus Stuff" mentioned in the programming doc
+        Helper function to reduce the number of game states to consider through symmetries
+
+        (e.g. it doesn’t matter if Player 1’s first move is in the top left,
+        top right, bottom left, or bottom right corner - they make for equivalent
+        games)
+        """
         if self.board == other.board:
             return True
 
