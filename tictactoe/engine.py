@@ -6,8 +6,8 @@ It is also responsible for determining the valid moves at the current state.
 DIRECTIONS = {
     "row": (0, 1),
     "col": (1, 0),
-    "diag_lr": (1, 1),
-    "diag_rl": (1, -1),
+    "diag_main": (1, 1),
+    "diag_anti": (1, -1),
 }
 
 class Move:
